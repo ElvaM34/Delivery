@@ -1,4 +1,6 @@
-3. Sistema Gestión de Pedidos de Alimentos 
+3. Sistema Gestión de Pedidos de Alimentos
+
+   
 1. Módulo de Registro y Autenticación de Usuarios 
 • Función: Permite a los usuarios (clientes y personal) registrarse y acceder al 
 sistema con autenticación segura. 
