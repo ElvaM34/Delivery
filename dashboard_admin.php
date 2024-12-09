@@ -39,7 +39,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
             </a>
             <a href="gestion_restaurantes.php" class="card">
                 <h3>Gestion de Restaurantes</h3>
-                <p>Administra los restaurantes asociados al sistema.</p>
+                <p>Administra los restaurantes asociados al sistema</p>
             </a>
         </div>
     </div>

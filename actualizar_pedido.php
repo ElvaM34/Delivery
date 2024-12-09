@@ -18,6 +18,7 @@ if (isset($_POST['pedido_id'])) {
     if ($stmt->execute()) {
         header("Location: gestion_pedidos.php?message=Pedido actualizado correctamente");
     } else {
+        
         echo "Error al actualizar el pedido.";
     }
 

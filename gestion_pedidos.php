@@ -49,10 +49,7 @@ $result = $conn->query($query);
                             <input type="hidden" name="pedido_id" value="<?php echo $row['pedido_id']; ?>">
                             <button type="submit">Actualizar</button>
                         </form>
-                        <form action="cancelar_pedido.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="pedido_id" value="<?php echo $row['pedido_id']; ?>">
-                            <button type="submit">Cancelar</button>
-                        </form>
+
                     </td>
                 </tr>
                 <?php endwhile; ?>

@@ -68,7 +68,7 @@ $result_menu = $stmt_menu->get_result();
     </header>
 
     <main class="container my-5">
-        <h2 class="text-center text-danger">Menú</h2>
+        <h2 class="text-center text-danger">Menu</h2>
         <?php if ($result_menu->num_rows > 0): ?>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <?php while ($menu = $result_menu->fetch_assoc()): ?>
@@ -85,6 +85,7 @@ $result_menu = $stmt_menu->get_result();
                                 <input type="hidden" name="menu_name" value="<?php echo htmlspecialchars($menu['nombre']); ?>">
                                 <input type="hidden" name="menu_price" value="<?php echo $menu['precio']; ?>">
                                 <input type="hidden" name="menu_image" value="<?php echo htmlspecialchars($menu['imagen']); ?>">
+                                <input type="hidden" name="restaurante_id" value="<?php echo $id_restaurante; ?>">
                                 <button type="submit" name="add_to_cart" class="btn btn-primary w-100">Agregar al carrito</button>
                             </form>
                         </div>

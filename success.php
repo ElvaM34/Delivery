@@ -1,51 +1,71 @@
-<?php 
-session_start(); 
-require_once 'conexion.php'; 
+<?php
+session_start();
+require 'conexion.php';
 
-$pedido_id = $_GET['pedido_id'] ?? null; 
-
-if (!$pedido_id) { 
-    echo "No se ha encontrado el ID del pedido."; 
-    exit; 
+if (!isset($_GET['payment_id'])) {
+    header("Location: cart.php?message=Hubo un problema con el pago.");
+    exit;
 }
 
-$stmt = $conn->prepare("SELECT p.id, p.total, p.estado, p.fecha, c.nombre 
-                         FROM pedidos p 
-                         JOIN clientes c ON p.cliente_id = c.id 
-                         WHERE p.id = ? "); 
-$stmt->bind_param("i", $pedido_id); 
-$stmt->execute(); 
-$stmt->store_result(); 
-$stmt->bind_result($pedido_id, $total, $estado, $fecha, $cliente_nombre); 
+$payment_id = $_GET['payment_id'];
 
-if ($stmt->fetch()) { 
-    echo "<h1>Gracias por tu compra, $cliente_nombre</h1>"; 
-    echo "<p>Tu pedido con ID $pedido_id ha sido procesado.</p>"; 
-    echo "<p>Total a pagar: MX$" . number_format($total, 2) . "</p>"; 
-    echo "<p>Estado del pedido: $estado</p>"; 
-    echo "<p>Fecha del pedido: $fecha</p>"; 
+$total = $_SESSION['total'] ?? 0;
+$cliente_id = $_SESSION['user_id'] ?? null; 
+$direccion = $_SESSION['direccion'] ?? 'Direccion no especificada'; 
+$metodo_pago = 'paypal'; 
+$estado = 'pendiente';
 
-    echo "<h2>Detalles del pedido:</h2>"; 
-    $stmt_detalle = $conn->prepare("SELECT dp.producto_id, p.nombre, dp.cantidad, dp.precio 
-                                     FROM detalle_pedidos dp 
-                                     JOIN productos p ON dp.producto_id = p.id 
-                                     WHERE dp.pedido_id = ? "); 
-    $stmt_detalle->bind_param("i", $pedido_id); 
-    $stmt_detalle-> execute(); 
-    $stmt_detalle->store_result(); 
-    $stmt_detalle->bind_result($producto_id, $producto_nombre, $cantidad, $precio); 
+if (empty($payment_id) || !$cliente_id || $total <= 0) {
+    die("Error: Datos invalidos para registrar el pedido.");
+}
 
-    echo "<ul>"; 
-    while ($stmt_detalle->fetch()) { 
-        echo "<li>$producto_nombre - Cantidad: $cantidad - Precio: MX$" . number_format($precio, 2) . "</li>"; 
-    } 
-    echo "</ul>"; 
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    $descripcion = implode(", ", array_map(function ($item) {
+        return "{$item['name']} x{$item['quantity']}";
+    }, $_SESSION['cart']));
+} else {
+    die("Error: El carrito esta vacio No se puede registrar el pedido.");
+}
 
-} else { 
-    echo "No se ha encontrado el pedido con ID $pedido_id."; 
-} 
+$restaurante_id = $_SESSION['cart'][0]['restaurante_id'] ?? 0;
 
-$stmt->close(); 
-$stmt_detalle->close(); 
-$conn->close(); 
-?> 
+if ($restaurante_id == 0) {
+    die("Error: Restaurante no valido.");
+}
+
+$query = "INSERT INTO pedidos (cliente_id, restaurante_id, descripcion, total, payment_id, estado, metodo_pago, direccion) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($query);
+
+if (!$stmt) {
+    die("Error al preparar la consulta SQL: " . $conn->error);
+}
+
+$stmt->bind_param("iissssss", $cliente_id, $restaurante_id, $descripcion, $total, $payment_id, $estado, $metodo_pago, $direccion);
+
+if ($stmt->execute()) {
+    unset($_SESSION['cart']);
+    unset($_SESSION['total']);
+    unset($_SESSION['direccion']);
+
+    $mensaje = "Gracias por tu pedido! Tu pago fue exitoso El restaurante se pondra en contacto contigo pronto.";
+} else {
+    die("Error al ejecutar la consulta SQL: " . $stmt->error);
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Exitoso!</title>
+    <link rel="stylesheet" href="cssM5/terminadoPago.css">
+</head>
+<body>
+    <div class="container">
+        <h1>✔</h1>
+        <h2><?php echo $mensaje; ?></h2>
+        <a href="dashboard_cliente.php" class="btn-success">Volver al Menu</a>
+    </div>
+</body>
+</html>

@@ -19,7 +19,7 @@ $query->execute();
 $result = $query->get_result();
 
 if ($result->num_rows === 0) {
-    die("Información del usuario no encontrada.");
+    die("Informacion del usuario no encontrada.");
 }
 
 $user = $result->fetch_assoc();

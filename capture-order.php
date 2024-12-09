@@ -26,7 +26,7 @@ if (!$result) {
 
 $result = json_decode($result);
 if ($result->status === "COMPLETED") {
-    echo "Pago completado! Gracias por tu compra.";
+    echo "Pago completado Gracias por tu compra.";
 } else {
     echo "Error al procesar el pago.";
 }

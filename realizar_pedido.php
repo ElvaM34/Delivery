@@ -17,7 +17,7 @@ $repartidor_id = intval($_SESSION['user_id']);
 
 $query = "
     UPDATE pedidos 
-    SET repartidor_id = NULL, estado = 'pendiente' 
+    SET estado = 'entregado' 
     WHERE id = ? AND repartidor_id = ? AND estado = 'en camino'
 ";
 
@@ -31,12 +31,12 @@ if (!$stmt) {
 $stmt->bind_param("ii", $pedido_id, $repartidor_id);
 $stmt->execute();
 
-
 if ($stmt->affected_rows > 0) {
-    header("Location: dashboard_repartidor.php?message=Pedido cancelado con exito.");
+    header("Location: dashboard_repartidor.php?message=Pedido marcado como entregado con exito.");
 } else {
-    header("Location: dashboard_repartidor.php?error=No se pudo cancelar el pedido Verifica el estado o si esta asignado a otro repartidor.");
+    header("Location: dashboard_repartidor.php?error=No se pudo marcar el pedido como entregado Verifica el estado o si está asignado a otro repartidor.");
 }
 
 $stmt->close();
 $conn->close();
+?>

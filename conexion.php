@@ -7,6 +7,6 @@ $database = 'osonny_db';
 $conn = new mysqli($host, $user, $password, $database);
 
 if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+    die("Conexion fallida: " . $conn->connect_error);
 }
 ?>

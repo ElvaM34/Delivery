@@ -1,16 +1,30 @@
 <?php
 session_start();
+require 'FPDF/fpdf.php'; 
+
 
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
+
 
 if (isset($_POST['add_to_cart'])) {
     $menu_id = $_POST['menu_id'];
     $menu_name = $_POST['menu_name'];
     $menu_price = $_POST['menu_price'];
     $menu_image = $_POST['menu_image'];
-    
+    $restaurante_id = $_POST['restaurante_id']; 
+   
+    if (!$restaurante_id) {
+        die("Error: Restaurante no valido.");
+    }
+
+
+    if (!isset($_SESSION['restaurante_id'])) {
+        $_SESSION['restaurante_id'] = $restaurante_id; 
+    } elseif ($_SESSION['restaurante_id'] != $restaurante_id) {
+        die("Error: No puedes agregar productos de diferentes restaurantes al carrito.");
+    }
     $found = false;
     foreach ($_SESSION['cart'] as &$item) {
         if ($item['id'] == $menu_id) {
@@ -25,12 +39,14 @@ if (isset($_POST['add_to_cart'])) {
             'name' => $menu_name,
             'price' => $menu_price,
             'image' => $menu_image,
-            'quantity' => 1
+            'quantity' => 1,
+            'restaurante_id' => $restaurante_id 
         ];
     }
     header("Location: cart.php?message=Producto agregado al carrito");
     exit;
 }
+
 
 if (isset($_POST['remove_from_cart'])) {
     $menu_id = $_POST['menu_id'];
@@ -61,6 +77,44 @@ if (isset($_POST['update_quantity'])) {
     }
     exit;
 }
+
+
+$total = 0;
+$restaurante_id = null;
+foreach ($_SESSION['cart'] as $item) {
+    $total += $item['price'] * $item['quantity'];
+    if (isset($item['restaurante_id'])) {
+        $restaurante_id = $item['restaurante_id'];
+    }
+}
+$_SESSION['total'] = $total; 
+$_SESSION['restaurante_id'] = $restaurante_id; 
+
+
+if (isset($_POST['generate_invoice'])) {
+    $pdf = new FPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('Arial', 'B', 16);
+
+    $pdf->Cell(40, 10, 'Factura de Compra');
+    $pdf->Ln(10);
+
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Cell(40, 10, 'Productos en el carrito:');
+    $pdf->Ln(10);
+
+    foreach ($_SESSION['cart'] as $item) {
+        $pdf->Cell(0, 10, "{$item['name']} x{$item['quantity']} - MX$" . number_format($item['price'] * $item['quantity'], 2), 0, 1);
+    }
+
+    $pdf->Ln(10);
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 10, "Total: MX$" . number_format($total, 2), 0, 1);
+
+
+    $pdf->Output('D', 'Factura.pdf');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -75,15 +129,12 @@ if (isset($_POST['update_quantity'])) {
     <div class="container">
         <h1>Carrito de Compras</h1>
         <a href="dashboard_cliente.php" class="continue-shopping">← Seguir comprando</a>
-        <?php
-        if (isset($_GET['message'])) {
-            echo "<p class='message'>" . htmlspecialchars($_GET['message']) . "</p>";
-        }
-        ?>
+        <?php if (isset($_GET['message'])): ?>
+            <p class='message'><?php echo htmlspecialchars($_GET['message']); ?></p>
+        <?php endif; ?>
+
         <?php if (!empty($_SESSION['cart'])): ?>
             <div class="cart-items">
-                <?php $total = 0; ?>
-                <?php $comision_total = 0; ?>
                 <?php foreach ($_SESSION['cart'] as $item): ?>
                     <div class="cart-item">
                         <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" class="cart-image">
@@ -96,35 +147,26 @@ if (isset($_POST['update_quantity'])) {
                                 <input type="number" id="quantity-<?php echo $item['id']; ?>" name="quantity" value="<?php echo $item['quantity']; ?>" min="1">
                                 <button type="submit" name="update_quantity">Actualizar</button>
                             </form>
-                            <?php
-                            $subtotal = $item['price'] * $item['quantity'];
-                            $comision = $subtotal * 0.016;
-                            $comision_total += $comision;
-                            ?>
-                            <p>Subtotal: MX$<?php echo number_format($subtotal, 2); ?></p>
-                            <p>Comision: MX$<?php echo number_format($comision, 2); ?></p>
+                            <p>Subtotal: MX$<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
                             <form method="post" action="cart.php">
                                 <input type="hidden" name="menu_id" value="<?php echo $item['id']; ?>">
                                 <button type="submit" name="remove_from_cart">Eliminar</button>
                             </form>
                         </div>
                     </div>
-                    <?php $total += $subtotal; ?>
                 <?php endforeach; ?>
             </div>
-            <h2>Total: MX$<?php echo number_format($total + $comision_total, 2); ?> (incluye comision)</h2>
-            <?php
-            $_SESSION['total'] = $total + $comision_total; 
-            ?>
-                <?php if (!empty($_SESSION['cart'])): ?>
+            <h2>Total: MX$<?php echo number_format($total, 2); ?></h2>
             <form method="get" action="metodo_pago.php">
                 <button type="submit" class="checkout-button">Proceder al Pago</button>
             </form>
-            <form method="post" action="generar_factura.php">
-                <button type="submit" class="generate-receipt-button">Generar Factura</button>
+            <form method="post" action="cart.php">
+                <button type="submit" name="generate_invoice" class="generate-receipt-button">Generar Factura</button>
             </form>
         <?php else: ?>
+
             <p>El carrito esta vacio</p>
+            
         <?php endif; ?>
     </div>
 </body>

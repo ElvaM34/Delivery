@@ -8,12 +8,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $tipo_usuario = $_POST['tipo_usuario'] ?? '';
 
     if (empty($nombre) || empty($email) || empty($password) || empty($tipo_usuario)) {
-        echo "<div class='error'>Todos los campos son obligatorios.</div>";
+        echo "<div class='error'>Todos los campos son obligatorios</div>";
         exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<div class='error'>Correo no valido.</div>";
+        echo "<div class='error'>Correo no valido</div>";
         exit;
     }
 
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        echo "<div class='error'>El correo ya esta registrado.</div>";
+        echo "<div class='error'>El correo ya esta registrado</div>";
         exit;
     }
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header("Location: login.html");
         exit;
     } else {
-        echo "<div class='error'>Error al registrar el usuario Intentalo de nuevo.</div>";
+        echo "<div class='error'>Error al registrar el usuario intentalo de nuevo.</div>";
     }
 
     $stmt->close();

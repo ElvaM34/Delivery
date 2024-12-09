@@ -12,7 +12,7 @@ use PayPal\Api\Payment;
 session_start();
 
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-    die("El carrito está vacio.");
+    die("El carrito esta vacio.");
 }
 
 $cart = $_SESSION['cart'];

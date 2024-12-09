@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'repartidor') {
 }
 
 if (!isset($_POST['pedido_id'])) {
-    header("Location: dashboard_repartidor.php?error=No se especifico un ID de pedido");
+    header("Location: dashboard_repartidor.php?error=No se especifico un ID de pedido.");
     exit;
 }
 
@@ -27,11 +27,9 @@ $stmt->bind_param("ii", $repartidor_id, $pedido_id);
 $stmt->execute();
 
 if ($stmt->affected_rows > 0) {
-    header("Location: dashboard_repartidor.php?message=Pedido aceptado con exito");
-    exit;
+    header("Location: dashboard_repartidor.php?message=Pedido aceptado con exito.");
 } else {
-    header("Location: dashboard_repartidor.php?error=No se pudo aceptar el pedido Es posible que ya este asignado.");
-    exit;
+    header("Location: dashboard_repartidor.php?error=No se pudo aceptar el pedido. Es posible que ya este asignado.");
 }
 
 $stmt->close();

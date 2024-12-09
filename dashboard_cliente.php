@@ -47,7 +47,7 @@ $stmt->close();
     <header class="top-bar">
         <a href="logout.php" class="logout-button">Cerrar Sesion</a>
         <div class="location">
-            <img src="img/location-icon.png" alt="Ubicacion">
+            <img src="img/localizacion.jpg" alt="Ubicacion">
             <span>Calle X</span>
         </div>
         <div class="search-bar">
@@ -62,18 +62,19 @@ $stmt->close();
                 <?php while ($row = $result_descuentos->fetch_assoc()): ?>
                     <div class="discount-card">
                         <img src="<?php echo $row['imagen']; ?>" alt="<?php echo $row['producto']; ?>">
-                        <div class="discount-info">
+                            <div class="discount-info">
                             <h3><?php echo $row['producto']; ?></h3>
                             <p>De: <span class="original-price">$<?php echo number_format($row['precio_original'], 2); ?></span></p>
                             <p>A: <span class="discount-price">$<?php echo number_format($row['precio_descuento'], 2); ?></span></p>
                             <p class="restaurant-name">En: <?php echo $row['restaurante_nombre']; ?></p>
                             <form action="cart.php" method="POST">
-                                <input type="hidden" name="menu_id" value="<?php echo $row['id']; ?>">
-                                <input type="hidden" name="menu_name" value="<?php echo $row['producto']; ?>">
-                                <input type="hidden" name="menu_price" value="<?php echo $row['precio_descuento']; ?>">
-                                <input type="hidden" name="menu_image" value="<?php echo $row['imagen']; ?>">
-                                <button type="submit" name="add_to_cart" class="add-to-cart-button">Agregar al carrito</button>
-                            </form>
+                        <input type="hidden" name="menu_id" value="<?php echo $row['id']; ?>">
+                        <input type="hidden" name="menu_name" value="<?php echo $row['producto']; ?>">
+                        <input type="hidden" name="menu_price" value="<?php echo $row['precio_descuento']; ?>">
+                        <input type="hidden" name="menu_image" value="<?php echo $row['imagen']; ?>">
+                        <input type="hidden" name="restaurante_id" value="<?php echo $row['restaurante_id']; ?>">
+                    </form>
+
                         </div>
                     </div>
                 <?php endwhile; ?>

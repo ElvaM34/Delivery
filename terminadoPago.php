@@ -17,8 +17,8 @@ $total = 100.00;
 <body>
     <div class="container">
         <div class="icon-check">✔</div>
-        <h1>¡Gracias por tu pedido!</h1>
-        <p>Tu pedido ha sido confirmado. Te contactaremos pronto para coordinar la entrega.</p>
+        <h1>Gracias por tu pedido!</h1>
+        <p>Tu pedido ha sido confirmado Te contactaremos pronto para coordinar la entrega</p>
 
         <h2>Total a pagar: MX$<?php echo number_format($total, 2); ?></h2>
 

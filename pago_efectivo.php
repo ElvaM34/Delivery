@@ -41,6 +41,6 @@ foreach ($_SESSION['cart'] as $item) {
 }
 
 unset($_SESSION['cart']);
-header("Location: success.html");
+header("Location: success.php");
 exit;
 ?>

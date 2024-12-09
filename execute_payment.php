@@ -51,7 +51,7 @@ try {
 
     $_SESSION['cart'] = [];
 
-    echo "Pago echo! Pedido registrado con el ID: $orderId.";
+    echo "Pago echo Pedido registrado con el ID: $orderId.";
     echo "<a href='success.html'>Ir a la pagina de confirmacion</a>";
 } catch (Exception $ex) {
     die("Error al procesar el pago: " . $ex->getMessage());

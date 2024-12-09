@@ -17,12 +17,12 @@ $productos = $result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Menú</title>
+    <title>Gestionar Menu</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center">Gestionar Menú</h1>
+    <h1 class="text-center">Gestionar Menu</h1>
     <a href="agregar_producto.php?restaurante_id=<?php echo $restaurante_id; ?>" class="btn btn-primary mb-3">Agregar Producto</a>
     <?php if (empty($productos)): ?>
         <p>No hay productos en el menu</p>
